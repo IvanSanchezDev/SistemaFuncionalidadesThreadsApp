@@ -19,4 +19,4 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
 ### Diseño de Base de Datos
 
-<img src="./img/bd.png">
+<img src="img/bd.png">
