@@ -10,9 +10,13 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
 
     1. Crear un sistema de autenticación y registro de usuarios que permita crear y administrar perfiles de usuario.
-
+    
     2. Implementar funcionalidades para que los usuarios puedan subir imágenes y textos como publicaciones en su perfil.
-
+    
     3. Desarrollar un sistema para mostrar a los usuarios sus seguidores y seguidos, permitiendo seguir o dejar de seguir a otros usuarios.
-
+    
     4. Diseñar una funcionalidad para que los usuarios puedan comentar en las publicaciones de otros usuarios.
+
+### Diseño de Base de Datos
+
+![](/home/spukM01-071/Documents/bd.png)
