@@ -19,4 +19,4 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
 ### Diseño de Base de Datos
 
-![bd](/home/spukM01-071/Documents/bd.png)
+![bd](/home/spukM01-071/Documents/IvanSanchez/NodeJs/SistemaFuncionalidadesThreadsApp/bd.png)
