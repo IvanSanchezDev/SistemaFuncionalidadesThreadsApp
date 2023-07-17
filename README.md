@@ -4,7 +4,7 @@ Threads es el lugar donde las comunidades se reúnen para hablar de todo, desde 
 
 ### Objetivo General
 
-Desarrollar el backend de las principales funcionalidades de Threads que permita a los usuarios crear perfiles, subir publicaciones, mostrar seguidores y seguidos, así como comentar en las publicaciones.
+Crear un sistema de las funcionalidades de Threads que facilite la interacción entre usuarios, permitiendo a los usuarios  opinar sobre diversos temas de interés y conectarse con sus creadores favoritos y personas afines. Además, se busca proporcionar un sistema completo que permita la autenticación y registro de usuarios, la gestión de perfiles, la posibilidad de publicar imágenes y textos, la visualización de seguidores y seguidos, así como la capacidad de comentar en las publicaciones de otros usuarios. 
 
 ### Objetivos Especificos
 
