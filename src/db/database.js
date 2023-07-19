@@ -4,9 +4,12 @@ import dotenv from 'dotenv'
 
 dotenv.config();
 
-const config=process.env.MY_CONNECTION;
+const info=process.env.MY_CONNECTION;
 const pool=mysql2.createPool({
-    config
+    host: process.env.HOSTNAME,
+    user: process.env.NAME_USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE
 })
 
 const getConnection=async()=>{
@@ -14,7 +17,7 @@ const getConnection=async()=>{
         const connection=await pool.getConnection();
         return connection;
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
     }
 }
 
