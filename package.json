@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Threads es el lugar donde las comunidades se reúnen para hablar de todo, desde los temas que te interesan hoy hasta lo que será tendencia mañana. Sea lo que sea lo que te interese, puedes seguir y conectar directamente con tus creadores favoritos y con otras personas a las que les gusten las mismas cosas, o crear tus propios seguidores fieles para compartir tus ideas, opiniones y creatividad con el mundo.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"nodemon --quiet ./src/app.js"
   },
   "keywords": [],
   "author": "",
