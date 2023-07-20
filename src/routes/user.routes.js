@@ -1,7 +1,8 @@
 import { Router } from "express";
 import getConnection from "../db/database.js";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { generateAccessToken } from "../Middlewares/jwt.js";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -10,12 +11,12 @@ const userRouter = Router();
 userRouter.post("/auth", async (req, res) => {
   try {
     const con = await getConnection();
-    const { username, password } = req.body;
-    const user = { username, password };
+    const { email,  password } = req.body;
+    const user = { email, password };
 
     const [existsUser] = await con.execute(
-      "SELECT * FROM users WHERE username=?",
-      [username]
+      "SELECT * FROM users WHERE email=?",
+      [email]
     );
 
     if (existsUser.length > 0) {
@@ -23,8 +24,8 @@ userRouter.post("/auth", async (req, res) => {
     }
 
     const [result] = await con.execute(
-      "INSERT INTO users (username, password) VALUES (?,?)",
-      [username, password]
+      "INSERT INTO users (email, password) VALUES (?,?)",
+      [email, password]
     );
 
     if (result.affectedRows !== 1) {
@@ -32,11 +33,12 @@ userRouter.post("/auth", async (req, res) => {
     }
 
     const accessToken = generateAccessToken(user);
+    envioCorreo(email);
     res.cookie("authorization", accessToken, { httpOnly: true });
 
     res.send("Usuario registrado y autenticado correctamente");
   } catch (error) {
-    res.status(401).send(error);
+    res.status(401).send(error.message);
   }
 });
 
@@ -66,21 +68,30 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-function generateAccessToken(user) {
-  return jwt.sign(user, process.env.JWT_PRIMARY_KEY, { expiresIn: "5m" });
-}
-
-function verifyToken() {
-  const { authorization } = req.cookies;
-  if (!authorization) res.send("Acces Denied");
-
-  jwt.verify(authorization, process.env.JWT_PRIMARY_KEY, (err, decode) => {
-    if (err) {
-      res.send("Acces Denied o expired");
-    } else {
-      req.user = decode;
-    }
-  });
-}
+async function envioCorreo(email){
+ 
+  try {
+    let config = {
+      service: "gmail",
+      auth: {
+        user: process.env.CORREO,
+        pass: process.env.CODIGO,
+      },
+    };
+  
+    const transporter = nodemailer.createTransport(config);
+  
+    const info = await transporter.sendMail({
+      from: process.env.CORREO, 
+      to: email, 
+      subject: "Bienvenida Threadsx", 
+      text: "Te has registrado correctamente en la app de Threadsx" 
+    });
+    console.log(info.messageId);
+  } catch (error) {
+    console.log(error.message);
+  }
+ 
+};
 
 export default userRouter;
