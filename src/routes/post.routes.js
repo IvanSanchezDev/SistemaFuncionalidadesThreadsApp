@@ -4,15 +4,12 @@ import { verifyToken } from "../Middlewares/jwt.js";
 
 const postRouter = Router();
 
-
-
-postRouter.post("/addPost", async (req, res) => {
+postRouter.post("/addPost", verifyToken, async (req, res) => {
   try {
     const con = await getConnection();
-    const { authorization } = req.cookies;
+    const {user_id} = req.user;
     const { description, media } = req.body;
-    const info = verifyToken(authorization);
-    const { user_id } = info;
+    
     const [result] = await con.execute(
       "INSERT INTO posts (user_id,description, media) VALUES (?,?,?)",
       [user_id, description, media]
@@ -29,38 +26,42 @@ postRouter.post("/addPost", async (req, res) => {
   }
 });
 
-postRouter.get("/getPost", async (req,res) => {
-    try {
-      const con = await getConnection();
-      const [result]=await con.execute('SELECT * FROM posts')
-      res.send(result)
-    } catch (error) {
-        console.log(error.message);
-    }
-  });
+postRouter.get("/getPost", async (req, res) => {
+  try {
+    const con = await getConnection();
+    const [result] = await con.execute("SELECT * FROM posts");
+    res.send(result);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 
-  postRouter.get("/getPostUser", async (req,res) => {
-    try {
-      const con = await getConnection();
-      const { authorization } = req.cookies;
-      const info = verifyToken(authorization);
-        const { user_id } = info;
-      const [result]=await con.execute('SELECT * FROM posts WHERE user_id=?', [user_id])
-      res.send(result)
-    } catch (error) {
-        console.log(error.message);
-    }
-  });
+postRouter.get("/getPostUser", verifyToken, async (req, res) => {
+  try {
+    const con = await getConnection();
 
-  postRouter.get("/getPostUser/:id", async (req,res) => {
-    try {
-      const con = await getConnection();
-      const user_id=req.params.id;
-      const [result]=await con.execute('SELECT * FROM posts WHERE user_id=?', [user_id])
-      res.send(result)
-    } catch (error) {
-        console.log(error.message);
-    }
-  });
+    const {user_id} = req.user;
+   
+    const [result] = await con.execute("SELECT * FROM posts WHERE user_id=?", [
+      user_id,
+    ]);
+    res.send(result);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+postRouter.get("/getPostUser/:id", async (req, res) => {
+  try {
+    const con = await getConnection();
+    const user_id = req.params.id;
+    const [result] = await con.execute("SELECT * FROM posts WHERE user_id=?", [
+      user_id,
+    ]);
+    res.send(result);
+  } catch (error) {
+    console.log(error.message);
+  }
+});
 
 export default postRouter;

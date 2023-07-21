@@ -56,7 +56,7 @@ userRouter.post("/auth", async (req, res) => {
 
     const accessToken = generateAccessToken(user);
     envioCorreo(email);
-    res.cookie("authorization", accessToken, { httpOnly: true });
+    res.cookie("token", accessToken, { httpOnly: true });
     res.status(200).json({
       message:
         "Usuario registrado correctamente. Revise su correo electrónico para confirmar su cuenta.",
@@ -66,12 +66,11 @@ userRouter.post("/auth", async (req, res) => {
   }
 });
 
-userRouter.get("/confirmacion", async (req, res) => {
+userRouter.get("/confirmacion", verifyToken, async (req, res) => {
   try {
-    const { authorization } = req.cookies;
-    const info = verifyToken(authorization);
-
-    const { email } = info;
+ 
+    const {email} = req.user;
+  
 
     const con = await getConnection();
     const [result] = await con.execute(
@@ -128,7 +127,7 @@ userRouter.post("/login", async (req, res) => {
       const data = { user_id, email };
       const accessToken = generateAccessToken(data);
 
-      res.cookie("authorization", accessToken, { httpOnly: true });
+      res.cookie("token", accessToken, { httpOnly: true });
 
       res.status(200).send("Ha ingresado Correctamente.");
     } else {
