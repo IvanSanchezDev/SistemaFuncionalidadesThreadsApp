@@ -2,9 +2,9 @@ import { Router } from "express";
 import getConnection from "../db/database.js";
 import dotenv from "dotenv";
 import { generateAccessToken, verifyToken } from "../Middlewares/jwt.js";
+import { encrypt, compare} from '../Helpers/handleBcrypt.js'
 
-
-import { envioCorreo } from "../funciones/sendEmail.js";
+import { envioCorreo } from "../Helpers/sendEmail.js";
 
 dotenv.config();
 
@@ -34,6 +34,8 @@ userRouter.post("/auth", async (req, res) => {
     
     const { email, password } = req.body;
     const user={email}
+    const passwordHash=await encrypt(password)
+
     const [existsUser] = await con.execute(
       "SELECT * FROM users WHERE email=?",
       [email]
@@ -45,7 +47,7 @@ userRouter.post("/auth", async (req, res) => {
 
     const [result] = await con.execute(
       "INSERT INTO users (email, password) VALUES (?,?)",
-      [email, password]
+      [email, passwordHash]
     );
 
     if (result.affectedRows !== 1) {
@@ -96,21 +98,35 @@ userRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const con = await getConnection();
 
+    
     const [rows] = await con.execute(
-      "SELECT user_id, email, password, verifyUser FROM users WHERE email=? AND password=?",
-      [email, password]
+      "SELECT user_id, email, password, verifyUser FROM users WHERE email=?",
+      [email]
     );
 
-    if (rows.length >= 1) {
-      const { user_id, verifyUser } = rows[0];
 
-      if (!verifyUser) {
+    if (rows.length >= 1) {
+      //const { user_id, password, verifyUser } = rows[0];
+      const user=rows[0];
+ 
+      if (!user.verifyUser) {
         return res
           .status(401)
           .send("Usuario no verificado. Por favor, verifica tu cuenta.");
       }
-      const user = { user_id, email, password };
-      const accessToken = generateAccessToken(user);
+
+      const checkPassword=await compare(password, user.password)
+
+      if (!checkPassword) {
+        return res
+        .status(401)
+        .send("Password Incorrecta");
+      }
+
+      const { user_id, email } = user
+
+      const data = { user_id, email };
+      const accessToken = generateAccessToken(data);
 
       res.cookie("authorization", accessToken, { httpOnly: true });
 
