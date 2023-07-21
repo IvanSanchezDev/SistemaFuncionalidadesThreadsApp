@@ -20,8 +20,8 @@ export async function envioCorreo(email) {
         subject: "Bienvenida Threadsx",
         text: `Te has registrado pero debes verificar tu cuenta, por favor dar click a continuacion en el siguiente link ${link}`,
       });
-      console.log(info.messageId);
+      //console.log(info.messageId);
     } catch (error) {
-      console.log(error.message);
+      console.log("error envio correo " + error.message);
     }
   }
