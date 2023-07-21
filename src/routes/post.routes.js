@@ -29,4 +29,27 @@ postRouter.post("/addPost", async (req, res) => {
   }
 });
 
+postRouter.get("/getPost", async (req,res) => {
+    try {
+      const con = await getConnection();
+      const [result]=await con.execute('SELECT * FROM posts')
+      res.send(result)
+    } catch (error) {
+        console.log(error.message);
+    }
+  });
+
+  postRouter.get("/getPostUser", async (req,res) => {
+    try {
+      const con = await getConnection();
+      const { authorization } = req.cookies;
+      const info = verifyToken(authorization);
+        const { user_id } = info;
+      const [result]=await con.execute('SELECT * FROM posts WHERE user_id=?', [user_id])
+      res.send(result)
+    } catch (error) {
+        console.log(error.message);
+    }
+  });
+
 export default postRouter;
