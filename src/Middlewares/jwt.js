@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export function generateAccessToken(user) {
-  return jwt.sign(user, process.env.JWT_PRIMARY_KEY, { expiresIn: "2m" });
+  return jwt.sign(user, process.env.JWT_PRIMARY_KEY, { expiresIn: "15m" });
 }
 
 export function verifyToken(req, res, next) {
