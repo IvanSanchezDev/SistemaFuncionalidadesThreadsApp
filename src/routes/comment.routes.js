@@ -4,10 +4,12 @@ import { verifyToken } from "../Middlewares/jwt.js";
 
 const commentRouter = Router();
 
-commentRouter.post("/addComment", verifyToken, async (req, res) => {
+commentRouter.post("/addComment/:post_id", verifyToken, async (req, res) => {
   try {
     const { user_id } = req.user;
-    const { comment, post_id } = req.body;
+    const { post_id }=req.params
+    const { comment } = req.body;
+    
     const con = await getConnection();
     const [result] = await con.execute(
       "INSERT INTO comments (comment, post_id, user_id) VALUES (?,?,?)",
