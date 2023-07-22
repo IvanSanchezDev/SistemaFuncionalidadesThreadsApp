@@ -1,18 +1,28 @@
 import { Router } from "express";
 import getConnection from "../db/database.js";
 import { verifyToken } from "../Middlewares/jwt.js";
+import { storeImageMiddleware } from '../Middlewares/StorageImage.js'
+
+import multer from "multer";
+
+
+//la funcion multer devuelve un middleware, en el cual almacenara los archivos subidos en temp/ 
+const upload = multer({ dest: 'temp/' });
+
+
 
 const postRouter = Router();
 
-postRouter.post("/addPost", verifyToken, async (req, res) => {
+postRouter.post("/addPost", verifyToken, upload.single('media'), storeImageMiddleware, async (req, res) => {
   try {
+    const imageHash = req.imageHash;
     const con = await getConnection();
     const {user_id} = req.user;
-    const { description, media } = req.body;
+    const { description } = req.body;
     
     const [result] = await con.execute(
       "INSERT INTO posts (user_id,description, media) VALUES (?,?,?)",
-      [user_id, description, media]
+      [user_id, description, imageHash]
     );
     if (result.affectedRows != 1) {
       return res
