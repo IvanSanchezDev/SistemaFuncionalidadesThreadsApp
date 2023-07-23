@@ -39,7 +39,7 @@ commentRouter.get("/getComment/:post_id", verifyToken, async (req, res) => {
 
     const con = await getConnection();
     const [result] = await con.execute(
-      "SELECT comments.*, users.email FROM comments INNER JOIN users ON comments.user_id=users.user_id INNER JOIN posts ON comments.post_id=posts.post_id WHERE posts.post_id=?",
+      "SELECT comments.*, users.email FROM comments INNER JOIN users ON comments.user_id=users.user_id WHERE comments.post_id=?",
       [post_id]
     );
     
