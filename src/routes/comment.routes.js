@@ -7,14 +7,15 @@ const commentRouter = Router();
 commentRouter.post("/addComment/:post_id", verifyToken, async (req, res) => {
   try {
     const { user_id } = req.user;
-    const { post_id }=req.params
+    const { post_id } = req.params;
     const { comment } = req.body;
-    
+
     const con = await getConnection();
     const [result] = await con.execute(
       "INSERT INTO comments (comment, post_id, user_id) VALUES (?,?,?)",
       [comment, post_id, user_id]
     );
+    console.log(result);
 
     if (result.affectedRows != 1) {
       return res
@@ -22,7 +23,31 @@ commentRouter.post("/addComment/:post_id", verifyToken, async (req, res) => {
         .send("no se pudo subir hacer el comentario, intentelo de nuevo");
     }
 
-    return res.status(200).json({ message: `Comentario Subido Correctamente en el post ${post_id}` });
+    return res
+      .status(200)
+      .json({
+        message: `Comentario Subido Correctamente en el post ${post_id}`,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "error server" });
+  }
+});
+
+commentRouter.get("/getComment/:post_id", verifyToken, async (req, res) => {
+  try {
+    const { post_id } = req.params;
+
+    const con = await getConnection();
+    const [result] = await con.execute(
+      "SELECT comments.*, users.email FROM comments INNER JOIN users ON comments.user_id=users.user_id INNER JOIN posts ON comments.post_id=posts.post_id WHERE posts.post_id=?",
+      [post_id]
+    );
+    
+    if (result.length === 0) {
+      return res.status(200).send("No hay comentarios todavia");
+    }
+
+    return res.status(200).send(result);
   } catch (error) {
     res.status(500).json({ message: "error server" });
   }
