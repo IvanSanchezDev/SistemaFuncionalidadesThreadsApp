@@ -26,4 +26,24 @@ likeRouter.post("/addLike/:post_id", verifyToken, async (req, res) => {
   }
 });
 
+likeRouter.get("/getLike/:post_id", verifyToken, async (req, res) => {
+  try {
+    const { post_id } = req.params;
+
+    const con = await getConnection();
+    const [result] = await con.execute(
+      "SELECT * FROM likes WHERE likes.post_id=?",
+      [post_id]
+    );
+    
+    if (result.length === 0) {
+      return res.status(200).send("No hay likes todavia");
+    }
+
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(500).json({ message: "error server" });
+  }
+});
+
 export default likeRouter;
