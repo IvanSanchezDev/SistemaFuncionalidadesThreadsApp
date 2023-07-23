@@ -24,7 +24,7 @@ commentRouter.post("/addComment/:post_id", verifyToken, async (req, res) => {
     }
 
     return res
-      .status(200)
+      .status(201)
       .json({
         message: `Comentario Subido Correctamente en el post ${post_id}`,
       });
@@ -39,7 +39,7 @@ commentRouter.get("/getComment/:post_id", verifyToken, async (req, res) => {
 
     const con = await getConnection();
     const [result] = await con.execute(
-      "SELECT comments.*, users.email FROM comments INNER JOIN users ON comments.user_id=users.user_id WHERE comments.post_id=?",
+      "SELECT  users.username AS usuario, comments.* FROM comments INNER JOIN users ON comments.user_id=users.user_id WHERE comments.post_id=?",
       [post_id]
     );
     
