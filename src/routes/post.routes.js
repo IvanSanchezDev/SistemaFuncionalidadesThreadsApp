@@ -55,19 +55,28 @@ postRouter.get("/getPostUser", verifyToken, async (req, res) => {
     const [result] = await con.execute("SELECT * FROM posts WHERE user_id=?", [
       user_id,
     ]);
+
+    if (result.length === 0) {
+      return res.status(204).send(`No hay post  todavia del usuario ${user_id}`);
+    }
     res.send(result);
   } catch (error) {
     console.log(error.message);
   }
 });
 
-postRouter.get("/getPostUser/:id", async (req, res) => {
+postRouter.get("/getPostUser/:username", async (req, res) => {
   try {
     const con = await getConnection();
-    const user_id = req.params.id;
-    const [result] = await con.execute("SELECT * FROM posts WHERE user_id=?", [
-      user_id,
+    const username = req.params.username;
+
+    const [result] = await con.execute("SELECT posts.* FROM `posts` INNER JOIN users ON posts.user_id=users.user_id WHERE users.username=?", [
+      username,
     ]);
+
+    if (result.length === 0) {
+      return res.status(204).send(`No hay post  todavia del usuario ${user_id}`);
+    }
     res.send(result);
   } catch (error) {
     console.log(error.message);
