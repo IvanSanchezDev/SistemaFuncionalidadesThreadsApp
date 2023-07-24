@@ -25,10 +25,11 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 ### Pasos
 
     1. Descargue o clone el repositorio
-    2. Ejecutar el siguiente comando para instalar las dependencias necesarias para que funcione => npm i
-    3. configurar archivo .env en la raiz del proyecto y  como esta en el .envexample
-    4. ejecutar el proyecto => npm run dev
-    5. Probar EndPoints
+    2. Importar la bd esta en la direccion src/db/threads.sql
+    3. Ejecutar el siguiente comando para instalar las dependencias necesarias para que funcione => npm i
+    4. configurar archivo .env en la raiz del proyecto y  como esta en el .envexample
+    5. ejecutar el proyecto => npm run dev
+    6. Probar EndPoints
 
 ### EndPoints
 
