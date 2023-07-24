@@ -3,8 +3,9 @@ import getConnection from "../db/database.js";
 import dotenv from "dotenv";
 import { generateAccessToken, verifyToken } from "../Middlewares/jwt.js";
 import { encrypt, compare } from "../Helpers/handleBcrypt.js";
-
 import { envioCorreo } from "../Helpers/sendEmail.js";
+import proxiUsuario from "../Middlewares/proxyUser.js";
+
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ userRouter.get("/", (req, res) => {
   `);
 });
 
-userRouter.post("/auth", async (req, res) => {
+userRouter.post("/auth", proxiUsuario, async (req, res) => {
   try {
     const con = await getConnection();
 
