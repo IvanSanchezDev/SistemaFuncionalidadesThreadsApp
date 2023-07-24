@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Transform, Type, Expose } from "class-transformer";
-import { IsDefined, MaxLength, MinLength, IsNotEmpty, Validate, } from "class-validator";
+import { IsDefined, MaxLength, MinLength, IsNotEmpty, Validate, IsOptional } from "class-validator";
 export class User {
 }
 __decorate([
@@ -57,6 +57,7 @@ __decorate([
             return "No debe contener espacios";
         }
     }),
+    IsOptional(),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
@@ -70,6 +71,7 @@ __decorate([
         },
     }),
     Type(() => String),
+    IsOptional(),
     __metadata("design:type", String)
 ], User.prototype, "detalles", void 0);
 __decorate([
@@ -83,6 +85,7 @@ __decorate([
             throw { status: 401, message: "Error en el campo celular" };
         }
     }),
+    IsOptional(),
     __metadata("design:type", Number)
 ], User.prototype, "telefono", void 0);
 __decorate([
@@ -96,5 +99,6 @@ __decorate([
             throw { status: 401, message: "Error en el codigo postal" };
         }
     }),
+    IsOptional(),
     __metadata("design:type", Number)
 ], User.prototype, "codigoPostal", void 0);

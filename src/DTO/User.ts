@@ -5,6 +5,7 @@ import {
   MinLength,
   IsNotEmpty,
   Validate,
+  IsOptional
 } from "class-validator";
 
 export class User {
@@ -55,7 +56,8 @@ export class User {
       return "No debe contener espacios";
     }
   })
-  username: string;
+  @IsOptional()
+  username?: string;
   @Expose({ name: "info" })
   @MaxLength(200, {
     message: () => {
@@ -66,17 +68,21 @@ export class User {
     },
   })
   @Type(() => String)
-  detalles: string;
+  @IsOptional()
+  detalles?: string;
+
   @Expose({ name: "celular" })
   @Transform(({ value }) => {
     let data = /^[0-9]+$/g.test(value);
     if (data) {
       return parseInt(value);
     } else {
-      throw { status: 401, message: "Error en el campo celular" };
+      throw { status: 401, message: "Error en el campo celularr" };
     }
   })
-  telefono: number;
+  @IsOptional()
+  telefono?: number;
+
   @Expose({ name: "codigo_postal" })
   @Transform(({ value }) => {
     let data = /^[0-9]+$/g.test(value);
@@ -86,5 +92,6 @@ export class User {
       throw { status: 401, message: "Error en el codigo postal" };
     }
   })
-  codigoPostal: number;
+  @IsOptional()
+  codigoPostal?: number;
 }
