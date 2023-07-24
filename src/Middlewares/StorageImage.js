@@ -27,6 +27,11 @@ export async function storeImageMiddleware(req, res, next) {
   }
 
   try {
+
+    if (!await directoryExists(targetDir)) {
+      await fs.mkdir(targetDir, { recursive: true });
+    }
+
       fs.rename(photo.path, targetFile); //  renombrar y mover el archivo en un solo paso
     /***photo.path representa la ubicación temporal del
      *  archivo subido por multer, y targetFile es la ruta 
@@ -38,6 +43,15 @@ export async function storeImageMiddleware(req, res, next) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "error al guardar la imagen" });
+  }
+}
+
+async function directoryExists(directoryPath) {
+  try {
+    const stats = await fs.stat(directoryPath);
+    return stats.isDirectory();
+  } catch (error) {
+    return false;
   }
 }
 
