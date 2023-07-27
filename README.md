@@ -70,7 +70,8 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
     5. Ver posts de un usuario especifico mediante el username => GET http://localhost:5001/post/getPostUser/:username
 
-    6. Añadir comentarios a un posts => POST http://localhost:5001/comment/addComment/:post_id
+    6. Añadir comentarios a un posts => POST http://localhost:5001/comment/addComment/:post_id 
+        ejemplo: http://localhost:5001/comment/addComment/1
 
         Datos de entrada: 
         {
@@ -78,7 +79,10 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
         }
 
     7. Traer los comentarios de un posts en especifico => GET http://localhost:5001/comment/getComment/:post_id
+        ejemplo: http://localhost:5001/comment/getComment/1
 
-    8. Hacer like en algun posts => POST http://localhost:5001/like/addLike/12
+    8. Hacer like en algun posts => POST http://localhost:5001/like/addLike/:post_id
+        ejemplo: http://localhost:5001/like/addLike/1
 
-    9. Traer los likes de un post en especifico => GET http://localhost:5001/like/getLike/12
+    9. Traer los likes de un post en especifico => GET http://localhost:5001/like/getLike/:post_id
+        ejemplo: http://localhost:5001/like/getLike/1
