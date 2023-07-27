@@ -29,7 +29,8 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
     3. Ejecutar el siguiente comando para instalar las dependencias necesarias para que funcione => npm i
     4. configurar archivo .env en la raiz del proyecto y  como esta en el .envexample
     5. ejecutar el proyecto => npm run dev
-    6. Probar EndPoints
+    6. Comando para compilar archivos typescript => npm run tsc
+    7. Probar EndPoints
 
 ### EndPoints
 
@@ -44,6 +45,8 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
             "celular":322194656,
             "codigo_postal":68001
         }
+
+        1.1. No puedes utilizar las funcionalidades sin antes haber iniciado sesion en el login
 
     2. Login de Usuarios => POST http://localhost:5001/user/login
 
