@@ -69,6 +69,7 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
     4. Ver Posts del usuario logeado => GET http://localhost:5001/post/getPostUser
 
     5. Ver posts de un usuario especifico mediante el username => GET http://localhost:5001/post/getPostUser/:username
+        ejemplo: http://localhost:5001/post/getPostUser/nombre-de-un-usuario-creado
 
     6. Añadir comentarios a un posts => POST http://localhost:5001/comment/addComment/:post_id 
         ejemplo: http://localhost:5001/comment/addComment/1
