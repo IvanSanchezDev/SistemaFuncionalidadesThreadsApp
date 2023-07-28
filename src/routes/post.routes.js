@@ -20,14 +20,18 @@ postRouter.post("/addPost", verifyToken, upload.single('media'), storeImageMiddl
     const {user_id} = req.user;
     const { description } = req.body;
     
-    const [result] = await con.execute(
-      "INSERT INTO posts (user_id,description, media) VALUES (?,?,?)",
-      [user_id, description, imageHash]
-    );
+  
+    const sql = "INSERT INTO posts (user_id,description, media) VALUES (?,?,?)";
+    const queryParams = [user_id, description, imageHash];
+
+    const result = await con.query(sql, queryParams);
+
+
+
     if (result.affectedRows != 1) {
       return res
         .status(500)
-        .send("no se pudo subir el post, intentelo de nuevo");
+        .json({message:"No se pudo subir el post, intentelo de nuevo."});
     }
 
     return res.status(200).json({ message: "Subido Correctamente" });
@@ -39,7 +43,7 @@ postRouter.post("/addPost", verifyToken, upload.single('media'), storeImageMiddl
 postRouter.get("/getPost", async (req, res) => {
   try {
     const con = await getConnection();
-    const [result] = await con.execute("SELECT * FROM posts");
+    const result = await con.query("SELECT * FROM posts");
     res.send(result);
   } catch (error) {
     console.log(error.message);
@@ -52,12 +56,10 @@ postRouter.get("/getPostUser", verifyToken, async (req, res) => {
 
     const {user_id} = req.user;
    
-    const [result] = await con.execute("SELECT * FROM posts WHERE user_id=?", [
-      user_id,
-    ]);
+    const result = await con.query("SELECT * FROM posts WHERE user_id=?", user_id);
 
     if (result.length === 0) {
-      return res.status(204).send(`No hay post  todavia del usuario ${user_id}`);
+      return res.status(204).json({message:`No hay post  todavia del usuario ${user_id}`});
     }
     res.send(result);
   } catch (error) {
@@ -70,12 +72,12 @@ postRouter.get("/getPostUser/:username", async (req, res) => {
     const con = await getConnection();
     const username = req.params.username;
 
-    const [result] = await con.execute("SELECT posts.* FROM `posts` INNER JOIN users ON posts.user_id=users.user_id WHERE users.username=?", [
-      username,
-    ]);
+    const [result] = await con.query("SELECT posts.* FROM `posts` INNER JOIN users ON posts.user_id=users.user_id WHERE users.username=?", 
+      username
+    );
 
     if (result.length === 0) {
-      return res.status(204).send(`No hay post  todavia del usuario ${user_id}`);
+      return res.status(204).json({message:`No hay post  todavia del usuario ${user_id}`});
     }
     res.send(result);
   } catch (error) {

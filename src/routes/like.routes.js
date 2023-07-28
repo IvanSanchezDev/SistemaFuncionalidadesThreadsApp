@@ -9,10 +9,11 @@ likeRouter.post("/addLike/:post_id", verifyToken, async (req, res) => {
     const { user_id } = req.user;
     const { post_id }=req.params
     const con = await getConnection();
-    const [result] = await con.execute(
-      "INSERT INTO likes (post_id, user_id) VALUES (?,?)",
-      [post_id, user_id]
-    );
+
+    const sql = "INSERT INTO likes (post_id, user_id) VALUES (?,?)";
+    const queryParams = [post_id, user_id];
+
+    const result = await con.query(sql, queryParams);
 
     if (result.affectedRows != 1) {
       return res
@@ -31,9 +32,9 @@ likeRouter.get("/getLike/:post_id", verifyToken, async (req, res) => {
     const { post_id } = req.params;
 
     const con = await getConnection();
-    const [result] = await con.execute(
+    const result = await con.query(
       "SELECT * FROM likes WHERE likes.post_id=?",
-      [post_id]
+      post_id
     );
     
     if (result.length === 0) {

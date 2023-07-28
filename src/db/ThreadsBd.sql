@@ -10,7 +10,6 @@ password varchar(255) NOT NULL,
 detalles varchar(200) NULL,
 telefono float NULL,
 codigoPostal int null,
-privateProfile int,
 PRIMARY KEY(user_id)
 );
 
@@ -42,4 +41,5 @@ PRIMARY KEY(id),
 FOREIGN KEY(post_id) REFERENCES posts(post_id),
 FOREIGN KEY(user_id) REFERENCES users(user_id)
 )
+
 

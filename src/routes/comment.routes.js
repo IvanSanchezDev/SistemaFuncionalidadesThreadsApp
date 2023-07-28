@@ -11,11 +11,10 @@ commentRouter.post("/addComment/:post_id", verifyToken, async (req, res) => {
     const { comment } = req.body;
 
     const con = await getConnection();
-    const [result] = await con.execute(
-      "INSERT INTO comments (comment, post_id, user_id) VALUES (?,?,?)",
-      [comment, post_id, user_id]
-    );
-    console.log(result);
+    const sql = "INSERT INTO comments (comment, post_id, user_id) VALUES (?,?,?)";
+    const queryParams = [comment, post_id, user_id];
+
+    const result = await con.query(sql, queryParams);
 
     if (result.affectedRows != 1) {
       return res
@@ -38,13 +37,13 @@ commentRouter.get("/getComment/:post_id", verifyToken, async (req, res) => {
     const { post_id } = req.params;
 
     const con = await getConnection();
-    const [result] = await con.execute(
+    const result = await con.query(
       "SELECT  users.username AS usuario, comments.* FROM comments INNER JOIN users ON comments.user_id=users.user_id WHERE comments.post_id=?",
-      [post_id]
+      post_id
     );
     
     if (result.length === 0) {
-      return res.status(200).send("No hay comentarios todavia");
+      return res.status(200).json({message:"No hay comentarios todavia"});
     }
 
     return res.status(200).send(result);
