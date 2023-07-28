@@ -1,6 +1,6 @@
-CREATE DATABASE threadsDb;
+CREATE DATABASE threadsdb;
 
-USE threadsDb;
+USE threadsdb;
 
 CREATE TABLE users(
 user_id int NOT NULL AUTO_INCREMENT,
