@@ -24,7 +24,7 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
 ### Pasos
 
-    1. Descargue o clone el repositorio
+    1. Descargue el repositorio de la rama prueba3
     2. Importar la bd esta en la direccion src/db/threads.sql
     3. Ejecutar el siguiente comando para instalar las dependencias necesarias para que funcione => npm i
     4. configurar archivo .env en la raiz del proyecto y  como esta en el .envexample
@@ -63,7 +63,10 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
         Campos de entrada:
         
+        form fields:
         description: "Mi primer posts"
+
+        Files:
         media: elegir un archivo tipo imagen 
 
     4. Ver Posts del usuario logeado => GET http://localhost:5001/post/getPostUser
