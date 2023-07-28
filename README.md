@@ -38,8 +38,8 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
 
         Datos de entrada: 
         {
-            "correo":"iivaan437@gmail.com",
-            "contrasenia":"password",
+            "email":"iivaan437@gmail.com",
+            "password":"password",
             "usuario":"IvS_24",
             "info":"futuro programador full stack",
             "celular":322194656,
@@ -53,7 +53,7 @@ Crear un sistema de las funcionalidades de Threads que facilite la interacción 
         Datos de entrada: 
         {
             "email":"iivaan437@gmail.com",
-            "password":"ivan"      
+            "password":"password"      
         }
 
     3. Subir Posts => POST http://localhost:5001/post/addPost

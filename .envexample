@@ -1,5 +1,6 @@
-HOST="localhost"
-NAME_USER="root"
-PASSWORD=""
-DATABASE=?
-JWT_PRIMARY_KEY="Ivan"
+HOSTNAME="?"
+NAME_USER="?"
+PASSWORD="?"
+DATABASE="?"
+JWT_PRIMARY_KEY="?"
+MY_CONFIG={"hostname":"localhost", "port":5001}
