@@ -1,47 +1,56 @@
 import { Router } from "express";
 import getConnection from "../db/database.js";
-import { verifyToken } from "../Middlewares/jwt.js";
+
 
 const likeRouter = Router();
 
-likeRouter.post("/addLike/:post_id", verifyToken, async (req, res) => {
+likeRouter.post("/addLike/:post_id", (req, res) => {
   try {
     const { user_id } = req.user;
-    const { post_id }=req.params
-    const con = await getConnection();
+    const { post_id } = req.params;
+    const con = getConnection();
 
     const sql = "INSERT INTO likes (post_id, user_id) VALUES (?,?)";
     const queryParams = [post_id, user_id];
 
-    const result = await con.query(sql, queryParams);
-
-    if (result.affectedRows != 1) {
-      return res
-        .status(500)
-        .send("no se pudo subir hacer el like, intentelo de nuevo");
-    }
-
-    return res.status(200).json({ message: "like successful" });
+    con.query(sql, queryParams, (error, results) => {
+      if (error) {
+        return res
+          .status(500)
+          .json({ message: "No se pudo subir el like, intentelo de nuevo." });
+      } else {
+        return res.status(201).json({
+          message: `Like Cargado Correctamente en el post ${post_id}`,
+        });
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: "error server" });
+    res.status(500).json({ message: "error addPost" + error.message });
   }
 });
 
-likeRouter.get("/getLike/:post_id", verifyToken, async (req, res) => {
+likeRouter.get("/getLike/:post_id",  (req, res) => {
   try {
     const { post_id } = req.params;
 
-    const con = await getConnection();
-    const result = await con.query(
+    const con = getConnection();
+    con.query(
       "SELECT * FROM likes WHERE likes.post_id=?",
-      post_id
+      post_id,
+      (error, results) => {
+        if (error) {
+          return res
+            .status(500)
+            .json({ message: "No cargan los likes, intentelo de nuevo." });
+        } else {
+          if (results.length === 0) {
+            return res.status(200).json({ message: "No hay likes todavia" });
+          } else {
+            return res.status(200).send(results);
+          }
+        }
+      }
     );
-    
-    if (result.length === 0) {
-      return res.status(200).send("No hay likes todavia");
-    }
-
-    return res.status(200).send(result);
   } catch (error) {
     res.status(500).json({ message: "error server" });
   }

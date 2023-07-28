@@ -12,7 +12,7 @@ import { IsDefined, MaxLength, MinLength, IsNotEmpty, Validate, IsOptional } fro
 export class User {
 }
 __decorate([
-    Expose({ name: "correo" }),
+    Expose({ name: "email" }),
     IsDefined({
         message: () => {
             throw { status: 401, message: "el parametro email es obligatorio" };
@@ -31,7 +31,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    Expose({ name: "contrasenia" }),
+    Expose({ name: "password" }),
     IsDefined({
         message: () => {
             throw { status: 401, message: "el parametro password es obligatorio" };
@@ -82,7 +82,7 @@ __decorate([
             return parseInt(value);
         }
         else {
-            throw { status: 401, message: "Error en el campo celular" };
+            throw { status: 401, message: "Error en el campo celularr" };
         }
     }),
     IsOptional(),

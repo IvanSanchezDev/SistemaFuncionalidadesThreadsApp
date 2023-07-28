@@ -13,10 +13,10 @@ const upload = multer({ dest: 'temp/' });
 
 const postRouter = Router();
 
-postRouter.post("/addPost", verifyToken, upload.single('media'), storeImageMiddleware, async (req, res) => {
+postRouter.post("/addPost",  upload.single('media'), storeImageMiddleware, async (req, res) => {
   try {
     const imageHash = req.imageHash;
-    const con = await getConnection();
+    const connection =  getConnection();
     const {user_id} = req.user;
     const { description } = req.body;
     
@@ -24,62 +24,66 @@ postRouter.post("/addPost", verifyToken, upload.single('media'), storeImageMiddl
     const sql = "INSERT INTO posts (user_id,description, media) VALUES (?,?,?)";
     const queryParams = [user_id, description, imageHash];
 
-    const result = await con.query(sql, queryParams);
-
-
-
-    if (result.affectedRows != 1) {
-      return res
+    connection.query(sql, queryParams, (error, results)=>{
+      if (error) {
+        return res
         .status(500)
         .json({message:"No se pudo subir el post, intentelo de nuevo."});
-    }
-
-    return res.status(200).json({ message: "Subido Correctamente" });
+      }else{
+        return res.status(200).json({ message: "Subido Correctamente" });
+      }
+     
+    });
   } catch (error) {
     res.status(500).json({ message: "error server" });
   }
 });
 
-postRouter.get("/getPost", async (req, res) => {
-  try {
-    const con = await getConnection();
-    const result = await con.query("SELECT * FROM posts");
-    res.send(result);
-  } catch (error) {
-    console.log(error.message);
-  }
-});
 
-postRouter.get("/getPostUser", verifyToken, async (req, res) => {
+postRouter.get("/getPostUser",  (req, res) => {
   try {
-    const con = await getConnection();
+    const connection = getConnection();
 
     const {user_id} = req.user;
    
-    const result = await con.query("SELECT * FROM posts WHERE user_id=?", user_id);
+    connection.query("SELECT * FROM posts WHERE user_id=?", user_id, (error, results)=>{
+      if (error) {
+        return res
+        .status(500)
+        .json({message:"No se pudo traer los post, intentelo de nuevo."});
+      }else{
+        if (results.length === 0) {
+          return res.status(204).json({message:`No hay post  todavia del usuario ${user_id}`});
+        }
+        res.json(results);
+      }
+    });
 
-    if (result.length === 0) {
-      return res.status(204).json({message:`No hay post  todavia del usuario ${user_id}`});
-    }
-    res.send(result);
   } catch (error) {
     console.log(error.message);
   }
 });
 
-postRouter.get("/getPostUser/:username", async (req, res) => {
+postRouter.get("/getPostUser/:username", (req, res) => {
   try {
-    const con = await getConnection();
+    const connection = getConnection();
     const username = req.params.username;
 
-    const [result] = await con.query("SELECT posts.* FROM `posts` INNER JOIN users ON posts.user_id=users.user_id WHERE users.username=?", 
-      username
+    connection.query("SELECT posts.* FROM `posts` INNER JOIN users ON posts.user_id=users.user_id WHERE users.username=?", 
+      username, (error,results)=>{
+        if (error) {
+          return res
+          .status(500)
+          .json({message:"No se pudo traer los post del usuario, intentelo de nuevo."});
+        }else{
+          if (results.length === 0) {
+            return res.status(204).json({message:`No hay post  todavia del usuario ${username}`});
+          }
+          res.json(results);
+        }
+      }
     );
 
-    if (result.length === 0) {
-      return res.status(204).json({message:`No hay post  todavia del usuario ${user_id}`});
-    }
-    res.send(result);
   } catch (error) {
     console.log(error.message);
   }

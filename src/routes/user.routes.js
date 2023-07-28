@@ -1,14 +1,19 @@
 import { Router } from "express";
 import getConnection from "../db/database.js";
-import dotenv from "dotenv";
+
 import { generateAccessToken, verifyToken } from "../Middlewares/jwt.js";
 import { encrypt, compare } from "../Helpers/handleBcrypt.js";
-import { envioCorreo } from "../Helpers/sendEmail.js";
+
 import proxiUsuario from "../Middlewares/proxyUser.js";
 
-dotenv.config();
+
+
+
+
 
 const userRouter = Router();
+
+
 
 //PRUEBA
 userRouter.get("/", (req, res) => {
@@ -30,45 +35,49 @@ userRouter.get("/", (req, res) => {
 
 userRouter.post("/auth", proxiUsuario, async (req, res) => {
   try {
-    const con = await getConnection();
-
+   
+ 
     const { email, password, username, detalles, telefono, codigoPostal } =
       req.body;
 
     const passwordHash = await encrypt(password);
 
+    const connection = getConnection();
+
     const sql = "SELECT * FROM users WHERE email=? or username=?";
     const queryParams = [email, username];
 
-    const existsUser = await con.query(sql, queryParams);
-
-    if (existsUser.length > 0) {
-      return res.status(409).json({message:"El correo o username ya está en uso."});
-    }
-
-    const sql2 =
-      "INSERT INTO users (email, password, username, detalles, telefono, codigoPostal) VALUES (?,?,?,?,?,?)";
-    const queryParams2 = [
-      email,
-      passwordHash,
-      username,
-      detalles,
-      telefono,
-      codigoPostal,
-    ];
-
-    const result = await con.query(sql2, queryParams2);
-
-    if (result.affectedRows !== 1) {
-      return res.status(500).json({message:"No se pudo crear el usuario."});
-    }
-
-    const accessToken = generateAccessToken({ email });
-    //envioCorreo(email);
-    res.cookie("token", accessToken, { httpOnly: true });
-    res.status(201).json({
-      message: "Usuario registrado correctamente.",
+    connection.query(sql, queryParams, (error, results)=>{
+      if (error) {
+        res.status(500).json({message:error.message});
+      } else {
+        if (results.length > 0) {
+          return res.status(409).json({message:"El correo o username ya está en uso."});
+        }else{
+          const sql2 =
+          "INSERT INTO users (email, password, username, detalles, telefono, codigoPostal) VALUES (?,?,?,?,?,?)";
+        const queryParams2 = [
+          email,
+          passwordHash,
+          username,
+          detalles,
+          telefono,
+          codigoPostal,
+        ];
+    
+        connection.query(sql2, queryParams2, (error, results)=>{
+          if (error) {
+            res.status(500).json({message:error.message});
+          } else {
+            res.status(201).json({
+              message: "Usuario registrado correctamente.",
+            });
+          }
+        });
+        }
+      }
     });
+
   } catch (error) {
     res.status(401).json({message:error.message});;
   }
@@ -101,43 +110,43 @@ userRouter.get("/confirmacion", verifyToken, async (req, res) => {
 userRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const con = await getConnection();
+    const connection = getConnection();
 
     const sql = "SELECT user_id, email, password FROM users WHERE email=?";
     const queryParams = [email];
 
-    const rows = await con.query(sql, queryParams);
-
-    if (rows.length >= 1) {
-      //const { user_id, password, verifyUser } = rows[0];
-      const user = rows[0];
-
-      /* if (!user.verifyUser) {
-        return res
-          .status(401)
-          .send("Usuario no verificado. Por favor, verifica tu cuenta.");
-      }*/
-
-      const checkPassword = await compare(password, user.password);
-
-      if (!checkPassword) {
-        return res.status(401).send("Password Incorrecta");
+    connection.query(sql, queryParams, async (error, results) => {
+      if (error) {
+        return res.status(500).send("Error en el servidor: " + error.message);
       }
 
-      const { user_id, email } = user;
+      if (results.length >= 1) {
+        const user = results[0];
+        const checkPassword = await comparePasswords(password, user.password);
 
-      const data = { user_id, email };
-      const accessToken = generateAccessToken(data);
+        if (!checkPassword) {
+          return res.status(401).send("Password Incorrecta");
+        }
 
-      res.cookie("token", accessToken, { httpOnly: true });
+        const { user_id, email } = user;
+        const data = { user_id, email };
+        const accessToken = generateAccessToken(data);
 
-      res.status(200).json({message:"Ha ingresado Correctamente."});;
-    } else {
-      res.status(400).json({message:"Usuario o password no coinciden."});;
-    }
+        res.cookie("token", accessToken, { httpOnly: true });
+        res.status(200).json({ message: "Ha ingresado Correctamente." });
+      } else {
+        res.status(400).json({ message: "Usuario o password no coinciden." });
+      }
+    });
   } catch (error) {
-    res.status(500).send("Error en el servidor." + error.message);
+    res.status(500).send("Error en el servidor: " + error.message);
   }
 });
+
+// Función para comparar contraseñas
+async function comparePasswords(inputPassword, hashedPassword) {
+  const result = await compare(inputPassword, hashedPassword);
+  return result;
+}
 
 export default userRouter;
