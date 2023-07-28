@@ -9,7 +9,7 @@ import {
 } from "class-validator";
 
 export class User {
-  @Expose({ name: "correo" })
+  @Expose({ name: "email" })
   @IsDefined({
     message: () => {
       throw { status: 401, message: "el parametro email es obligatorio" };
@@ -29,7 +29,7 @@ export class User {
   @Type(() => String)
   email: string;
 
-  @Expose({ name: "contrasenia" })
+  @Expose({ name: "password" })
   @IsDefined({
     message: () => {
       throw { status: 401, message: "el parametro password es obligatorio" };
